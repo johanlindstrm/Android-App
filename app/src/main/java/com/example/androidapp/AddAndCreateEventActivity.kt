@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.get
+import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.android.synthetic.main.activity_add_and_create_date.*
 import java.time.LocalDateTime
 import java.time.Month
@@ -22,17 +23,18 @@ import java.util.*
 class AddAndCreateEventActivity : AppCompatActivity() {
 
     private lateinit var eventTextName : EditText
-    private lateinit var dateTextName : TextView
+    //private lateinit var dateTextName : TextView
     private lateinit var timeLeftText : TextView
+    private lateinit var selectDateEdit : EditText
     //private val handler = Handler()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_and_create_date)
-
+        selectDateEdit = findViewById(R.id.select_date_edit)
         eventTextName = findViewById(R.id.event_name_edit)
-        dateTextName = findViewById(R.id.display_date_text)
+        //dateTextName = findViewById(R.id.display_date_text)
         timeLeftText = findViewById(R.id.time_test_text)
 
         updateTime()
@@ -57,7 +59,8 @@ class AddAndCreateEventActivity : AppCompatActivity() {
     private fun addNewDate() {
 
         val selectedEvent = eventTextName.text.toString()
-        val selectedDate = dateTextName.text.toString()
+        val selectedDate = selectDateEdit.text.toString()
+        //val selectedDate = dateTextName.text.toString()
         val timeLeft = timeLeftText.text.toString()
 
         val newDate = Event(selectedDate, selectedEvent,timeLeft)
@@ -72,7 +75,28 @@ class AddAndCreateEventActivity : AppCompatActivity() {
         // Get the current date/time IRL
         val currentDate = Calendar.getInstance()
         //currentDate.timeZone = TimeZone.getTimeZone("GMT")
+        /*
+        val builder = MaterialDatePicker.Builder.dateRangePicker()
 
+        val picker = builder.build()
+
+        picker.show(supportFragmentManager, picker.toString())
+
+        picker.addOnCancelListener {
+            Log.d("DatePicker Activity", "Dialog was cancelled")
+        }
+
+        picker.addOnNegativeButtonClickListener {
+            Log.d("DatePicker Activity", "Dialog Negative Button was clicked")
+        }
+
+        picker.addOnPositiveButtonClickListener {
+            Log.d("DatePicker Activity", "Date String = ${picker.headerText}:: Date epoch value = ${it}")
+        }
+
+        picker.addOnPositiveButtonClickListener {
+            Log.d("DatePicker Activity", "Date String = ${picker.headerText}::  Date epoch values::${it.first}:: to :: ${it.second}")
+        }*/
         //Set a future date
         val c1 = Calendar.getInstance()
         val year = c1.get(Calendar.YEAR)
@@ -87,13 +111,12 @@ class AddAndCreateEventActivity : AppCompatActivity() {
         c1[Calendar.SECOND] = 0
         //c1.timeZone = TimeZone.getTimeZone("GMT")
 
-
         // How to get hours, minutes, seconds from dpd??
-        pick_date_button.setOnClickListener {
+        select_date_edit.setOnClickListener {
             val dpd = DatePickerDialog(this,
                 DatePickerDialog.OnDateSetListener { view: DatePicker, mYear: Int, mMonth: Int, mDay: Int ->
 
-                    dateTextName.text = "" + mYear +  "/" + (mMonth+1) + "/" + mDay
+                    selectDateEdit.setText("" + mYear +  "/" + (mMonth+1) + "/" + mDay)
                     Toast.makeText(this, "Date selected:" + mYear + "/" + (mMonth+1) + "/" + mDay, Toast.LENGTH_SHORT).show()
                     Log.d("test", "${c1.timeInMillis}")
                     Log.d("test", "${currentDate.timeInMillis}")
