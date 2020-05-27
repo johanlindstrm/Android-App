@@ -12,50 +12,77 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="156dp"
         android:layout_marginEnd="156dp"
-        android:layout_marginBottom="214dp"
+        android:layout_marginBottom="150dp"
         android:text="@string/add_event"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/event_name_edit"
-        android:layout_width="wrap_content"
+    <!-- Event Name textEdit/textLayout - Material Design -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/event_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
-        android:autofillHints="@string/event_title"
-        android:ems="10"
-        android:hint="@string/event_title"
-        android:inputType="textPersonName"
+        android:layout_marginTop="100dp"
+        app:endIconMode="clear_text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/event_name_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="72dp"
+            android:autofillHints="@string/event_title"
+            android:ems="10"
+            android:hint="@string/event_title"
+            android:inputType="text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <!-- Select Date textEdit/textLayout - Material Design -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/date_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="200dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/select_date_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="36dp"
+            android:ems="10"
+            android:focusable="false"
+            android:hint="@string/select_date"
+            android:importantForAutofill="no"
+            android:inputType="datetime"
+            android:longClickable="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <!-- Time between selected date and current date text -->
     <TextView
         android:id="@+id/time_test_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="156dp"
-        android:layout_marginEnd="157dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginStart="157dp"
+        android:layout_marginTop="86dp"
+        android:layout_marginEnd="156dp"
         android:text="@string/days_left"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/add_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/select_date_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="80dp"
-        android:focusable="false"
-        android:longClickable="false"
-        android:ems="10"
-        android:hint="@string/select_date"
-        android:importantForAutofill="no"
-        android:inputType="datetime"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/event_name_edit" />
+        app:layout_constraintTop_toBottomOf="@+id/date_layout" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

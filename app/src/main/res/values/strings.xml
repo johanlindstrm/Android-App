@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidApp</string>
+    <string name="app_name">Days</string>
     <!-- Event View -->
     <string name="days_left">%1$d:Days</string>
 

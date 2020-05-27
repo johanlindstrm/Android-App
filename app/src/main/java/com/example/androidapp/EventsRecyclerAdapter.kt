@@ -27,7 +27,6 @@ class EventsRecyclerAdapter(private val context: Context, private val eventList:
         holder.dateText.text = event.simpleDate
         holder.eventName.text = event.eventName
         holder.timeLeft.text = event.timeLeft
-        //holder.datePosition = position
 
     }
 
@@ -35,33 +34,20 @@ class EventsRecyclerAdapter(private val context: Context, private val eventList:
         val dateText = itemView.findViewById<TextView>(R.id.dateTextView)
         val eventName = itemView.findViewById<TextView>(R.id.event_name_text)
         val timeLeft = itemView.findViewById<TextView>(R.id.time_left_text)
-        //var datePosition = 0
     }
 
     fun removeEvent(viewHolder: RecyclerView.ViewHolder) {
-
         removedPosition = viewHolder.adapterPosition
         removedItem = eventList[viewHolder.adapterPosition]
 
         eventList.removeAt(viewHolder.adapterPosition)
         notifyItemRemoved(viewHolder.adapterPosition)
-
-        /* CREATED IN MAIN AND IT WORKS NOW
-        Snackbar.make(viewHolder.itemView, "Event deleted!", Snackbar.LENGTH_LONG).setAction("UNDO") {
-            eventList.add(removedPosition,removedItem)
-            notifyItemInserted(removedPosition)
-
-        }.show()*/
-
     }
 
     fun restoreItem(viewHolder: RecyclerView.ViewHolder) {
         eventList.add(removedPosition, removedItem)
         notifyItemInserted(removedPosition)
     }
-
-
-
 
 
 

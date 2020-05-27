@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -15,9 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidapp.DataManager.eventList
 import com.google.android.material.snackbar.Snackbar
-
-
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //listIsEmptyText()
+        listIsEmptyText()
 
         viewAdapter = EventsRecyclerAdapter(this, eventList)
         recyclerView = findViewById(R.id.datesListView)
@@ -54,8 +52,7 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
 
-            //Delete works and undo feature now updates in the recyclerview however it does no longer bring back the CORRECT item or the position..
-            // Hämtar nu tillbaka den man tog senast bort.
+            // Fungerar som den ska nu, hämtar tillbaka den senaste deleted. Gjort snackbar till en egen variable som går att customize.
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, position: Int) {
 
                 var position = viewHolder.adapterPosition
@@ -83,12 +80,12 @@ class MainActivity : AppCompatActivity() {
                 val itemView = viewHolder.itemView
                 val backgroundCornerOffset = 20
 
-                val iconMargin: Int = (itemView.height - deleteIcon.getIntrinsicHeight()) / 2
+                val iconMargin: Int = (itemView.height - deleteIcon.intrinsicHeight) / 2
                 val iconTop: Int =
-                    itemView.top + (itemView.height - deleteIcon.getIntrinsicHeight()) / 2
-                val iconBottom: Int = iconTop + deleteIcon.getIntrinsicHeight()
+                    itemView.top + (itemView.height - deleteIcon.intrinsicHeight) / 2
+                val iconBottom: Int = iconTop + deleteIcon.intrinsicHeight
 
-                /* Saving in case i want to make a edit swipe
+                /* Saving in case I want to make an edit swipe or somethinh
                 if (dX > 0) { // Swiping to the right
                     val iconLeft: Int = itemView.left + iconMargin + deleteIcon.getIntrinsicWidth()
                     val iconRight = itemView.left + iconMargin
@@ -100,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                     ) }*/
 
                 if (dX < 0) { // Swiping to the left
-                    val iconLeft: Int = itemView.right - iconMargin - deleteIcon.getIntrinsicWidth()
+                    val iconLeft: Int = itemView.right - iconMargin - deleteIcon.intrinsicWidth
                     val iconRight = itemView.right - iconMargin
                     deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
                     swipeBackground.setBounds(
@@ -116,7 +113,6 @@ class MainActivity : AppCompatActivity() {
 
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
-
         }
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
@@ -126,26 +122,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        listIsEmptyText()
         recyclerView.adapter?.notifyDataSetChanged()
+
     }
 
 
-
-
-
-    /*
     private fun listIsEmptyText() {
         emptyListText = findViewById(R.id.empty_list_text)
 
-        if (recyclerView.datesListView == null) {
+        if (eventList.size <= 0) {
             emptyListText.text = "List is empty, please add a new event!"
             Log.d("test", "list is empty")
         } else {
-            emptyListText.text = null
+            emptyListText.text = " "
             Log.d("test", "list is not empty")
 
         }
 
-    }*/
+    }
 
 }
