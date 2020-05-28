@@ -26,6 +26,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="100dp"
         app:endIconMode="clear_text"
+        android:tooltipText="Enter Event Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -37,6 +38,7 @@
             android:layout_marginTop="72dp"
             android:autofillHints="@string/event_title"
             android:ems="10"
+            android:maxLength="16"
             android:hint="@string/event_title"
             android:inputType="text"
             app:layout_constraintStart_toStartOf="parent"

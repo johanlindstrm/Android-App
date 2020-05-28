@@ -1,25 +1,17 @@
 package com.example.androidapp
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.os.Build
+import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.widget.*
-import androidx.annotation.RequiresApi
+import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.get
-import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_add_and_create_date.*
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.Month
-import java.time.Year
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.time.temporal.ChronoUnit
+import java.text.SimpleDateFormat
 import java.util.*
+
 
 class AddAndCreateEventActivity : AppCompatActivity() {
 
@@ -27,18 +19,28 @@ class AddAndCreateEventActivity : AppCompatActivity() {
     private lateinit var timeLeftText : TextView
     private lateinit var selectDateEdit : EditText
 
+    lateinit var auth : FirebaseAuth
     private val handler = Handler()
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_and_create_date)
+        //database = Firebase.database.reference
+
+
+        val actionBar = supportActionBar
+        if (actionBar != null) {
+            actionBar.title = "Add Event"
+        }
+
+        auth = FirebaseAuth.getInstance()
+
         selectDateEdit = findViewById(R.id.select_date_edit)
         eventTextName = findViewById(R.id.event_name_edit)
         timeLeftText = findViewById(R.id.time_test_text)
+        getDateDifference()
 
-        updateTime()
 
         // Update Time TextView every second, needed in main activity for all cardViews
         /*
@@ -58,6 +60,8 @@ class AddAndCreateEventActivity : AppCompatActivity() {
         }
 
     }
+
+
     // Adds a new Event Title, Selected Date, "Time Diff" to the Event List and then finish() returns to the recyclerview
     private fun addNewDate() {
 
@@ -84,16 +88,97 @@ class AddAndCreateEventActivity : AppCompatActivity() {
 
     final step update the countdown
 
-
-
-
-
      */
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("SetTextI18n")
-    private fun updateTime() {
+    private fun getDateDifference() {
+
+        selectDateEdit.setText(SimpleDateFormat("yyyy.MM.dd").format(System.currentTimeMillis()))
+
+        val currentCal = Calendar.getInstance()
+        val futureCal = Calendar.getInstance()
+
+        val dateSetListener = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            futureCal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            futureCal.set(Calendar.MONTH, monthOfYear)
+            futureCal.set(Calendar.YEAR, year)
+
+
+            val myFormat = "yyyy.MM.dd" // mention the format you need
+            val sdf = SimpleDateFormat(myFormat, Locale.ENGLISH)
+            selectDateEdit.setText(sdf.format(futureCal.time))
+
+        }
+
+        selectDateEdit.setOnClickListener {
+            DatePickerDialog(this, dateSetListener,
+                futureCal.get(Calendar.YEAR),
+                futureCal.get(Calendar.MONTH),
+                futureCal.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+        val diff = futureCal.timeInMillis - currentCal.timeInMillis
+
+        val daysLeft = diff / (24 * 60 * 60 * 1000)
+        val hoursLeft = diff / (1000 * 60 * 60) % 24
+        val minutesLeft = diff / (1000 * 60) % 60
+        val secondsLeft = (diff / 1000) % 60
+
+        time_test_text.text = "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds"
+
+
+
+        /*
+        val startDate = GregorianCalendar.getInstance()
+
+        //Set a future date, this is currently selected date
+        val endDate = Calendar.getInstance()
+        val year = endDate.get(Calendar.YEAR)
+        val month = endDate.get(Calendar.MONTH)
+        val day = endDate.get(Calendar.DAY_OF_MONTH)
+        /*
+        c1[Calendar.HOUR] = 0
+        c1[Calendar.MINUTE] = 0
+        c1[Calendar.SECOND] = 0
+         */
+
+        endDate.timeZone = TimeZone.getTimeZone("GMT+2")
+
+        select_date_edit.setOnClickListener {
+            val dpd = DatePickerDialog(this, OnDateSetListener { view: DatePicker, mYear: Int, mMonth: Int, mDay: Int ->
+
+                    selectDateEdit.setText("" + mYear +  "/" + (mMonth+1) + "/" + mDay)
+                    Toast.makeText(this, "Date selected:" + mYear + "/" + (mMonth+1) + "/" + mDay, Toast.LENGTH_SHORT).show()
+                },
+                year, month, day
+            )
+            dpd.show()
+        }
+
+ */
+
+
+        /*
+
+        val diffBetween = Duration.between(c1.toInstant(),currentDate.toInstant())
+
+        Log.d("test", "$diffBetween")
+
+        // Cal the diff between the two Calenders, Need to get the hours, min, secs + update the time in main activity somehow
+        val diff = currentDate.timeInMillis - c1.timeInMillis
+
+        // Change the milliseconds to days, hours, minutes and seconds
+        val daysLeft = diff / (24 * 60 * 60 * 1000)
+        val hoursLeft = diff / (1000 * 60 * 60) % 24
+        val minutesLeft = diff / (1000 * 60) % 60
+        val secondsLeft = (diff / 1000) % 60
+
+        timeLeftText.text = "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds"
+
+        Log.d("tag", "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds")
+
+ */
+
         /*
         // Get the current date/time IRL
         val currentDate = Calendar.getInstance()
@@ -117,56 +202,6 @@ class AddAndCreateEventActivity : AppCompatActivity() {
 
         Log.d("calendar", "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds")
          */
-
-        //Set a future date, this is currently selected date
-        val c1 = Calendar.getInstance()
-        val year = c1.get(Calendar.YEAR)
-        val month = c1.get(Calendar.MONTH)
-        val day = c1.get(Calendar.DAY_OF_MONTH)
-        /*
-        c1[Calendar.HOUR] = 0
-        c1[Calendar.MINUTE] = 0
-        c1[Calendar.SECOND] = 0
-         */
-
-        c1.timeZone = TimeZone.getTimeZone("GMT+2")
-
-        select_date_edit.setOnClickListener {
-            val dpd = DatePickerDialog(this,
-                DatePickerDialog.OnDateSetListener { view: DatePicker, mYear: Int, mMonth: Int, mDay: Int ->
-
-                    selectDateEdit.setText("" + mYear +  "/" + (mMonth+1) + "/" + mDay)
-                    Toast.makeText(this, "Date selected:" + mYear + "/" + (mMonth+1) + "/" + mDay, Toast.LENGTH_SHORT).show()
-                },
-                year,
-                month,
-                day
-            )
-            dpd.show()
-
-        }
-        /*
-
-        val diffBetween = Duration.between(c1.toInstant(),currentDate.toInstant())
-
-        Log.d("test", "$diffBetween")
-
-        // Cal the diff between the two Calenders, Need to get the hours, min, secs + update the time in main activity somehow
-        val diff = currentDate.timeInMillis - c1.timeInMillis
-
-        // Change the milliseconds to days, hours, minutes and seconds
-        val daysLeft = diff / (24 * 60 * 60 * 1000)
-        val hoursLeft = diff / (1000 * 60 * 60) % 24
-        val minutesLeft = diff / (1000 * 60) % 60
-        val secondsLeft = (diff / 1000) % 60
-
-        timeLeftText.text = "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds"
-
-        Log.d("tag", "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds")
-
- */
-
     }
-
 
 }

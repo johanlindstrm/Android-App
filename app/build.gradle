@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -39,4 +40,11 @@ dependencies {
     implementation'com.google.android.material:material:1.2.0-alpha06'
     //implementation 'com.android.support:design:25.1.0'
     implementation 'com.google.android.material:material:1.1.0'
+    implementation platform('com.google.firebase:firebase-bom:25.3.1')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
+    implementation 'com.twitter.sdk.android:twitter-core:3.3.0'
+
 }
