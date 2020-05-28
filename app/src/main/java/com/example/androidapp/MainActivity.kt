@@ -1,5 +1,7 @@
 package com.example.androidapp
 
+import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
@@ -35,20 +37,26 @@ class MainActivity : AppCompatActivity() {
 
     private var swipeBackground:ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
 
+    @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar!!.setCustomView(R.layout.action_bar_layout)
 
         listIsEmptyText()
 
         mAuth = FirebaseAuth.getInstance()
         mAuth.currentUser
-
+        /*
         handler.post(object : Runnable {
             override fun run() {
                 handler.postDelayed(this, 1000)
             }
         })
+
+        */
+
 /*
         val db = Firebase.firestore
 

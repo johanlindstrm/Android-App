@@ -1,5 +1,7 @@
 package com.example.androidapp
 
+import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
@@ -19,21 +21,18 @@ class AddAndCreateEventActivity : AppCompatActivity() {
     private lateinit var eventTextName : EditText
     private lateinit var timeLeftText : TextView
     private lateinit var selectDateEdit : EditText
-
     lateinit var auth : FirebaseAuth
+    private val handler = Handler()
 
 
+    @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_and_create_date)
         //database = Firebase.database.reference
 
-
-        val actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar.title = "Add Event"
-        }
-
+        supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar!!.setCustomView(R.layout.action_bar_add_event)
 
         auth = FirebaseAuth.getInstance()
 
@@ -41,18 +40,6 @@ class AddAndCreateEventActivity : AppCompatActivity() {
         eventTextName = findViewById(R.id.event_name_edit)
         timeLeftText = findViewById(R.id.time_test_text)
         getDateDifference()
-
-
-        // Update Time TextView every second, needed in main activity for all cardViews
-        /*
-        handler.post(object : Runnable {
-            override fun run() {
-                // Keep the postDelayed before the updateTime(), so when the event ends, the handler will stop too.
-                handler.postDelayed(this, 1000)
-                updateTime()
-            }
-        })
-         */
 
         add_button.setOnClickListener {
             // Run the addNewDate function on button click
@@ -78,33 +65,31 @@ class AddAndCreateEventActivity : AppCompatActivity() {
     }
 
     /* TODO
+    //COMPLETED
     Get the currentDate convert to timeInMillis to be able to get the diff later
-
     Get a futureDate from datepickerdialog/user input and convert to timeInMillis
-
     then get the diff
     val diff = futureMillis - currentMillis = the time diffrence bewtween the dates in milliseconds
-
     next step convert to days, hours, min, sec
 
+    //NOT DONE
     final step update the countdown
-
      */
-
 
     private fun getDateDifference() {
 
         selectDateEdit.setText(SimpleDateFormat("yyyy.MM.dd").format(System.currentTimeMillis()))
+        time_test_text.text = "00 Days 00 Hours 00 Minutes 00 Seconds"
 
-        val currentCal = Calendar.getInstance()
-        val futureCal = Calendar.getInstance()
+        val currentDate = Calendar.getInstance()
+        val eventDate = Calendar.getInstance()
+        eventDate[Calendar.SECOND] = 1
 
         val dateSetListener = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            futureCal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            futureCal.set(Calendar.MONTH, monthOfYear)
-            futureCal.set(Calendar.YEAR, year)
-
-            val diff = futureCal.timeInMillis - currentCal.timeInMillis
+            eventDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            eventDate.set(Calendar.MONTH, monthOfYear)
+            eventDate.set(Calendar.YEAR, year)
+            val diff = eventDate.timeInMillis - currentDate.timeInMillis
             val daysLeft = diff / (24 * 60 * 60 * 1000)
             val hoursLeft = diff / (1000 * 60 * 60) % 24
             val minutesLeft = diff / (1000 * 60) % 60
@@ -112,99 +97,18 @@ class AddAndCreateEventActivity : AppCompatActivity() {
 
             time_test_text.text = "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds"
 
-
             val myFormat = "yyyy.MM.dd" // mention the format you need
             val sdf = SimpleDateFormat(myFormat, Locale.ENGLISH)
-            selectDateEdit.setText(sdf.format(futureCal.time))
+            selectDateEdit.setText(sdf.format(eventDate.time))
 
         }
 
         selectDateEdit.setOnClickListener {
-            DatePickerDialog(this, dateSetListener,
-                futureCal.get(Calendar.YEAR),
-                futureCal.get(Calendar.MONTH),
-                futureCal.get(Calendar.DAY_OF_MONTH)).show()
+            DatePickerDialog(this, dateSetListener, eventDate.get(Calendar.YEAR), eventDate.get(Calendar.MONTH), eventDate.get(Calendar.DAY_OF_MONTH)).show()
 
-                //Log.d("millis", "${futureCal.timeInMillis}")
         }
-        Log.d("millis", "Calendar ${currentCal.timeInMillis} futureCal ${futureCal.timeInMillis}")
+        Log.d("millis", "Calendar ${currentDate.timeInMillis} futureCal ${eventDate.timeInMillis}")
 
-
-
-        /*
-        val startDate = GregorianCalendar.getInstance()
-
-        //Set a future date, this is currently selected date
-        val endDate = Calendar.getInstance()
-        val year = endDate.get(Calendar.YEAR)
-        val month = endDate.get(Calendar.MONTH)
-        val day = endDate.get(Calendar.DAY_OF_MONTH)
-        /*
-        c1[Calendar.HOUR] = 0
-        c1[Calendar.MINUTE] = 0
-        c1[Calendar.SECOND] = 0
-         */
-
-        endDate.timeZone = TimeZone.getTimeZone("GMT+2")
-
-        select_date_edit.setOnClickListener {
-            val dpd = DatePickerDialog(this, OnDateSetListener { view: DatePicker, mYear: Int, mMonth: Int, mDay: Int ->
-
-                    selectDateEdit.setText("" + mYear +  "/" + (mMonth+1) + "/" + mDay)
-                    Toast.makeText(this, "Date selected:" + mYear + "/" + (mMonth+1) + "/" + mDay, Toast.LENGTH_SHORT).show()
-                },
-                year, month, day
-            )
-            dpd.show()
-        }
-
- */
-
-
-        /*
-
-        val diffBetween = Duration.between(c1.toInstant(),currentDate.toInstant())
-
-        Log.d("test", "$diffBetween")
-
-        // Cal the diff between the two Calenders, Need to get the hours, min, secs + update the time in main activity somehow
-        val diff = currentDate.timeInMillis - c1.timeInMillis
-
-        // Change the milliseconds to days, hours, minutes and seconds
-        val daysLeft = diff / (24 * 60 * 60 * 1000)
-        val hoursLeft = diff / (1000 * 60 * 60) % 24
-        val minutesLeft = diff / (1000 * 60) % 60
-        val secondsLeft = (diff / 1000) % 60
-
-        timeLeftText.text = "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds"
-
-        Log.d("tag", "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds")
-
- */
-
-        /*
-        // Get the current date/time IRL
-        val currentDate = Calendar.getInstance()
-        val currentInMills = currentDate.timeInMillis
-        //currentDate.timeZone = TimeZone.getTimeZone("GMT")
-        Log.d("calendar", "$currentInMills Time in millis")
-
-        val futureDate = Calendar.getInstance()
-        futureDate.add(Calendar.DATE,5)
-        val futureInMillis = futureDate.timeInMillis
-        Log.d("calendar", "$futureInMillis Time in Millis")
-
-        // Cal the diff between the two Calenders, Need to get the hours, min, secs + update the time in main activity somehow
-        val diff = futureInMillis - currentInMills
-
-        // Change the milliseconds to days, hours, minutes and seconds
-        val daysLeft = diff / (24 * 60 * 60 * 1000)
-        val hoursLeft = diff / (1000 * 60 * 60) % 24
-        val minutesLeft = diff / (1000 * 60) % 60
-        val secondsLeft = (diff / 1000) % 60
-
-        Log.d("calendar", "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds")
-         */
     }
 
 }

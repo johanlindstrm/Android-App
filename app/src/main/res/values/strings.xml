@@ -9,7 +9,7 @@
     <string name="select_date">Please select a date!</string>
     <string name="event_title">Event Title</string>
     <string name="pick_date_btn">Pick a date</string>
-    <string name="add_event">Add event</string>
+    <string name="add_event">Add Event</string>
 
     <!-- Twitter consumer key and secret -->
     <string name="twitter_consumer_key" translatable="false">YOUR_CONSUMER_KEY</string>
