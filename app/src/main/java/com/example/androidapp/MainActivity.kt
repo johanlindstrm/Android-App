@@ -6,9 +6,11 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -17,7 +19,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.androidapp.DataManager.eventList
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var recyclerView: RecyclerView
     lateinit var emptyListText: TextView
     lateinit var deleteIcon: Drawable
+    lateinit var mAuth: FirebaseAuth
+    private val handler = Handler()
 
     private var swipeBackground:ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
 
@@ -33,6 +40,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         listIsEmptyText()
+
+        mAuth = FirebaseAuth.getInstance()
+        mAuth.currentUser
+
+        handler.post(object : Runnable {
+            override fun run() {
+                handler.postDelayed(this, 1000)
+            }
+        })
+/*
+        val db = Firebase.firestore
+
+
+        db.collection("events")
+            .add(eventList)
+            .addOnSuccessListener {documentReference ->
+                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error adding document", e)
+            }
+
+ */
 
         viewAdapter = EventsRecyclerAdapter(this, eventList)
         recyclerView = findViewById(R.id.datesListView)
@@ -119,6 +149,24 @@ class MainActivity : AppCompatActivity() {
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = mAuth.currentUser
+        if (currentUser != null) {
+            (currentUser)
+        } else {
+            mAuth.signInAnonymously()
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        val user = mAuth.currentUser
+                        user?.let { (it) }
+                    } else {
+                        Toast.makeText(this@MainActivity, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
     }
 
 

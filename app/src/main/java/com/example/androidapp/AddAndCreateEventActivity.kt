@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +21,6 @@ class AddAndCreateEventActivity : AppCompatActivity() {
     private lateinit var selectDateEdit : EditText
 
     lateinit var auth : FirebaseAuth
-    private val handler = Handler()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +33,7 @@ class AddAndCreateEventActivity : AppCompatActivity() {
         if (actionBar != null) {
             actionBar.title = "Add Event"
         }
+
 
         auth = FirebaseAuth.getInstance()
 
@@ -103,6 +104,14 @@ class AddAndCreateEventActivity : AppCompatActivity() {
             futureCal.set(Calendar.MONTH, monthOfYear)
             futureCal.set(Calendar.YEAR, year)
 
+            val diff = futureCal.timeInMillis - currentCal.timeInMillis
+            val daysLeft = diff / (24 * 60 * 60 * 1000)
+            val hoursLeft = diff / (1000 * 60 * 60) % 24
+            val minutesLeft = diff / (1000 * 60) % 60
+            val secondsLeft = (diff / 1000) % 60
+
+            time_test_text.text = "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds"
+
 
             val myFormat = "yyyy.MM.dd" // mention the format you need
             val sdf = SimpleDateFormat(myFormat, Locale.ENGLISH)
@@ -115,16 +124,10 @@ class AddAndCreateEventActivity : AppCompatActivity() {
                 futureCal.get(Calendar.YEAR),
                 futureCal.get(Calendar.MONTH),
                 futureCal.get(Calendar.DAY_OF_MONTH)).show()
+
+                //Log.d("millis", "${futureCal.timeInMillis}")
         }
-
-        val diff = futureCal.timeInMillis - currentCal.timeInMillis
-
-        val daysLeft = diff / (24 * 60 * 60 * 1000)
-        val hoursLeft = diff / (1000 * 60 * 60) % 24
-        val minutesLeft = diff / (1000 * 60) % 60
-        val secondsLeft = (diff / 1000) % 60
-
-        time_test_text.text = "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds"
+        Log.d("millis", "Calendar ${currentCal.timeInMillis} futureCal ${futureCal.timeInMillis}")
 
 
 
