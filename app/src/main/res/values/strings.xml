@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">Days</string>
     <!-- Event View -->
-    <string name="days_left">%1$d:Days</string>
-
+    <string name="days_left">Days Hours Minutes Seconds</string>
     <string name="selected_date">Selected Date</string>
 
     <!-- Add and Create Event View -->
@@ -10,14 +9,6 @@
     <string name="event_title">Event Title</string>
     <string name="pick_date_btn">Pick a date</string>
     <string name="add_event">Add Event</string>
-
-    <!-- Twitter consumer key and secret -->
-    <string name="twitter_consumer_key" translatable="false">YOUR_CONSUMER_KEY</string>
-    <string name="twitter_consumer_secret" translatable="false">YOUR_CONSUMER_SECRET</string>
-
-
-
-
 
 
 </resources>

@@ -11,9 +11,11 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_add_and_create_date.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class AddAndCreateEventActivity : AppCompatActivity() {
@@ -31,15 +33,44 @@ class AddAndCreateEventActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_and_create_date)
         //database = Firebase.database.reference
 
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("events")
+
+        // Create a new user with a first and last name
+        /*
+        val user: MutableMap<String, Any> = HashMap()
+        user["first"] = "Ada"
+        user["last"] = "Lovelace"
+        user["born"] = 1815
+
+
+        // Add a new document with a generated ID
+        db.collection("users")
+            .add(user)
+            .addOnSuccessListener { documentReference -> Log.d("test", "DocumentSnapshot added with ID: " + documentReference.id) }
+            .addOnFailureListener { e -> Log.w("test", "Error adding document", e) }
+
+         */
+
+
         supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar!!.setCustomView(R.layout.action_bar_add_event)
 
-        auth = FirebaseAuth.getInstance()
+        //auth = FirebaseAuth.getInstance()
 
         selectDateEdit = findViewById(R.id.select_date_edit)
         eventTextName = findViewById(R.id.event_name_edit)
         timeLeftText = findViewById(R.id.time_test_text)
         getDateDifference()
+
+        /*
+        handler.post(object : Runnable {
+            override fun run() {
+                handler.postDelayed(this, 1000)
+            }
+        })
+        */
 
         add_button.setOnClickListener {
             // Run the addNewDate function on button click
@@ -79,8 +110,8 @@ class AddAndCreateEventActivity : AppCompatActivity() {
 
     private fun getDateDifference() {
 
-        selectDateEdit.setText(SimpleDateFormat("yyyy.MM.dd").format(System.currentTimeMillis()))
-        time_test_text.text = "00 Days 00 Hours 00 Minutes 00 Seconds"
+        //selectDateEdit.setText(SimpleDateFormat("yyyy.MM.dd").format(System.currentTimeMillis()))
+        time_test_text.text = " "
 
         val currentDate = Calendar.getInstance()
         val eventDate = Calendar.getInstance()
@@ -90,6 +121,7 @@ class AddAndCreateEventActivity : AppCompatActivity() {
             eventDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
             eventDate.set(Calendar.MONTH, monthOfYear)
             eventDate.set(Calendar.YEAR, year)
+
             val diff = eventDate.timeInMillis - currentDate.timeInMillis
             val daysLeft = diff / (24 * 60 * 60 * 1000)
             val hoursLeft = diff / (1000 * 60 * 60) % 24
@@ -105,8 +137,7 @@ class AddAndCreateEventActivity : AppCompatActivity() {
         }
 
         selectDateEdit.setOnClickListener {
-            DatePickerDialog(this, dateSetListener, eventDate.get(Calendar.YEAR), eventDate.get(Calendar.MONTH), eventDate.get(Calendar.DAY_OF_MONTH)).show()
-
+           DatePickerDialog(this, dateSetListener, eventDate.get(Calendar.YEAR), eventDate.get(Calendar.MONTH), eventDate.get(Calendar.DAY_OF_MONTH)).show()
         }
         Log.d("millis", "Calendar ${currentDate.timeInMillis} futureCal ${eventDate.timeInMillis}")
 

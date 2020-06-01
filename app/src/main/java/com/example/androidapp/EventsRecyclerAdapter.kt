@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 
-class EventsRecyclerAdapter(private val context: Context, private val eventList: MutableList<Event>) : RecyclerView.Adapter<EventsRecyclerAdapter.ViewHolder>() {
+class EventsRecyclerAdapter(context: Context, private val eventList: MutableList<Event>) : RecyclerView.Adapter<EventsRecyclerAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
 
@@ -30,7 +29,7 @@ class EventsRecyclerAdapter(private val context: Context, private val eventList:
 
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val dateText = itemView.findViewById<TextView>(R.id.dateTextView)
         val eventName = itemView.findViewById<TextView>(R.id.event_name_text)
         val timeLeft = itemView.findViewById<TextView>(R.id.time_left_text)
@@ -44,7 +43,7 @@ class EventsRecyclerAdapter(private val context: Context, private val eventList:
         notifyItemRemoved(viewHolder.adapterPosition)
     }
 
-    fun restoreItem(viewHolder: RecyclerView.ViewHolder) {
+    fun restoreItem() {
         eventList.add(removedPosition, removedItem)
         notifyItemInserted(removedPosition)
     }

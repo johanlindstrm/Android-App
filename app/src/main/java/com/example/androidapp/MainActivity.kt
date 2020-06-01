@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -21,9 +20,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.androidapp.DataManager.eventList
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var emptyListText: TextView
     lateinit var deleteIcon: Drawable
     lateinit var mAuth: FirebaseAuth
-    private val handler = Handler()
 
     private var swipeBackground:ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
 
@@ -48,29 +43,6 @@ class MainActivity : AppCompatActivity() {
 
         mAuth = FirebaseAuth.getInstance()
         mAuth.currentUser
-        /*
-        handler.post(object : Runnable {
-            override fun run() {
-                handler.postDelayed(this, 1000)
-            }
-        })
-
-        */
-
-/*
-        val db = Firebase.firestore
-
-
-        db.collection("events")
-            .add(eventList)
-            .addOnSuccessListener {documentReference ->
-                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w("TAG", "Error adding document", e)
-            }
-
- */
 
         viewAdapter = EventsRecyclerAdapter(this, eventList)
         recyclerView = findViewById(R.id.datesListView)
@@ -99,7 +71,7 @@ class MainActivity : AppCompatActivity() {
                 var snackbar = Snackbar.make(viewHolder.itemView, "Event deleted",Snackbar.LENGTH_LONG)
 
                 snackbar.setAction("UNDO") {
-                    (viewAdapter as EventsRecyclerAdapter).restoreItem(viewHolder)
+                    (viewAdapter as EventsRecyclerAdapter).restoreItem()
                     (recyclerView.adapter as EventsRecyclerAdapter).notifyItemInserted(position)
                     recyclerView.scrollToPosition(position)
                 }
@@ -177,14 +149,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onResume() {
         super.onResume()
         listIsEmptyText()
         recyclerView.adapter?.notifyDataSetChanged()
 
     }
-
 
     private fun listIsEmptyText() {
         emptyListText = findViewById(R.id.empty_list_text)
@@ -197,7 +167,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("test", "list is not empty")
 
         }
-
     }
 
 }
