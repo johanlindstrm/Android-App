@@ -4,24 +4,24 @@ import android.annotation.SuppressLint
 import android.app.ActionBar
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_add_and_create_date.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 
 
 class AddAndCreateEventActivity : AppCompatActivity() {
 
     private lateinit var eventTextName : EditText
-    private lateinit var timeLeftText : TextView
+    private lateinit var dateDiffText : TextView
     private lateinit var selectDateEdit : EditText
     lateinit var auth : FirebaseAuth
     private val handler = Handler()
@@ -31,28 +31,6 @@ class AddAndCreateEventActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_and_create_date)
-        //database = Firebase.database.reference
-
-
-        val db = FirebaseFirestore.getInstance()
-        db.collection("events")
-
-        // Create a new user with a first and last name
-        /*
-        val user: MutableMap<String, Any> = HashMap()
-        user["first"] = "Ada"
-        user["last"] = "Lovelace"
-        user["born"] = 1815
-
-
-        // Add a new document with a generated ID
-        db.collection("users")
-            .add(user)
-            .addOnSuccessListener { documentReference -> Log.d("test", "DocumentSnapshot added with ID: " + documentReference.id) }
-            .addOnFailureListener { e -> Log.w("test", "Error adding document", e) }
-
-         */
-
 
         supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar!!.setCustomView(R.layout.action_bar_add_event)
@@ -61,7 +39,8 @@ class AddAndCreateEventActivity : AppCompatActivity() {
 
         selectDateEdit = findViewById(R.id.select_date_edit)
         eventTextName = findViewById(R.id.event_name_edit)
-        timeLeftText = findViewById(R.id.time_test_text)
+        dateDiffText = findViewById(R.id.time_test_text)
+
         getDateDifference()
 
         /*
@@ -87,7 +66,7 @@ class AddAndCreateEventActivity : AppCompatActivity() {
 
         val selectedEvent = eventTextName.text.toString()
         val selectedDate = selectDateEdit.text.toString()
-        val timeLeft = timeLeftText.text.toString()
+        val timeLeft = dateDiffText.text.toString()
 
         val newDate = Event(selectedDate, selectedEvent,timeLeft)
 

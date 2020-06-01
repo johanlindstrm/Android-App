@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorPrimary"
     tools:context=".AddAndCreateEventActivity">
 
     <Button
@@ -15,8 +15,8 @@
         android:layout_marginEnd="156dp"
         android:layout_marginBottom="150dp"
         android:text="@string/add_event"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/accent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -26,11 +26,13 @@
         android:id="@+id/event_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="100dp"
         android:layout_marginEnd="16dp"
-        android:textColorHint="@color/black"
+        android:textColorHint="@color/otherWhite"
         android:tooltipText="Enter Event Title"
+        app:counterEnabled="true"
+        app:counterMaxLength="18"
+        app:counterTextAppearance="@style/CounterText"
         app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,17 +40,17 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/event_name_edit"
-            android:layout_width="315dp"
+            android:layout_width="367dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="72dp"
             android:ems="10"
-            android:longClickable="false"
-            android:textColorHint="@color/black"
-            android:textColor="@color/black"
             android:hint="@string/event_title"
             android:inputType="text"
+            android:longClickable="false"
             android:maxLength="18"
+            android:textColor="@color/otherWhite"
+            android:textColorHint="@color/otherWhite"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,10 +62,9 @@
         android:id="@+id/date_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="200dp"
         android:layout_marginEnd="16dp"
-        android:textColorHint="@color/black"
+        android:textColorHint="@color/otherWhite"
         app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,17 +72,18 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/select_date_edit"
-            android:layout_width="311dp"
+            android:layout_width="364dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="28dp"
             android:layout_marginTop="36dp"
             android:ems="10"
             android:focusable="false"
-            android:textColor="@color/black"
             android:hint="@string/select_date"
             android:importantForAutofill="no"
             android:inputType="datetime"
-            android:longClickable="false" />
+            android:longClickable="false"
+            android:textColor="@color/otherWhite"
+            android:textColorHint="@color/otherWhite" />
     </com.google.android.material.textfield.TextInputLayout>
 
 

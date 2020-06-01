@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.androidapp.DataManager.eventList
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +41,42 @@ class MainActivity : AppCompatActivity() {
         supportActionBar!!.setCustomView(R.layout.action_bar_layout)
 
         listIsEmptyText()
+
+        val db = FirebaseFirestore.getInstance()
+
+        val events = mutableListOf<Event>()
+
+        val eventsRef = db.collection("events")
+
+        eventsRef.addSnapshotListener { snapshot, e ->
+            if (snapshot != null) {
+                for (document in snapshot.documents) {
+                    val newEvent = document.toObject(Event::class.java)
+                    if (newEvent != null)
+                        events.add(newEvent!!)
+                    println("Johan : $newEvent")
+                }
+            }
+        }
+
+
+
+        // Create a new user with a first and last name
+/*
+        val user: MutableMap<String, Any> = HashMap()
+        user["first"] = "Ada"
+        user["last"] = "Lovelace"
+        user["born"] = 1815
+
+
+        // Add a new document with a generated ID
+        db.collection("users")
+            .add(user)
+            .addOnSuccessListener { documentReference -> Log.d("test", "DocumentSnapshot added with ID: " + documentReference.id) }
+            .addOnFailureListener { e -> Log.w("test", "Error adding document", e) }
+
+ */
+
 
         mAuth = FirebaseAuth.getInstance()
         mAuth.currentUser
@@ -130,7 +167,7 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
     }
-
+    //auth anonomys
     override fun onStart() {
         super.onStart()
         val currentUser = mAuth.currentUser

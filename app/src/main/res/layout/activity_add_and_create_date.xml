@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="100dp"
+        app:errorEnabled="true"
         app:endIconMode="clear_text"
-        android:tooltipText="Enter Event Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

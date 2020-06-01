@@ -23,9 +23,9 @@ class EventsRecyclerAdapter(context: Context, private val eventList: MutableList
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = eventList[position]
-        holder.dateText.text = event.simpleDate
+        holder.dateText.text = event.selectedDate
         holder.eventName.text = event.eventName
-        holder.timeLeft.text = event.timeLeft
+        holder.timeLeft.text = event.dateDiff
 
     }
 
