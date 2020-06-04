@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -19,20 +20,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.*
 
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var viewAdapter: RecyclerView.Adapter<*>
     lateinit var recyclerView: RecyclerView
-    lateinit var emptyListText: TextView
-    lateinit var deleteIcon: Drawable
-    lateinit var mAuth: FirebaseAuth
+    private lateinit var emptyListText: TextView
+    private lateinit var deleteIcon: Drawable
+    private lateinit var mAuth: FirebaseAuth
 
     private val db = FirebaseFirestore.getInstance()
     private val reference = db.collection("events")
 
+    val handler = Handler()
     private var swipeBackground:ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
 
     @SuppressLint("WrongConstant")
@@ -44,30 +46,37 @@ class MainActivity : AppCompatActivity() {
         supportActionBar!!.setCustomView(R.layout.action_bar_layout)
 
         listIsEmptyText()
+        /*
+        handler.post(object : Runnable {
+            override fun run() {
+                // Keep the postDelayed before the updateTime(), so when the event ends, the handler will stop too.
+                viewAdapter.notifyDataSetChanged()
+
+                handler.postDelayed(this, 60*1000)
+            }
+        })
+         */
 
         mAuth = FirebaseAuth.getInstance()
         mAuth.currentUser
 
         viewAdapter = EventsRecyclerAdapter(this, DataManager.eventList)
+
         recyclerView = findViewById(R.id.datesListView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = EventsRecyclerAdapter(this, DataManager.eventList)
 
-        val eventItems = DataManager.eventList
 
+        val eventItems = DataManager.eventList
         reference.get().addOnSuccessListener { documentSnapshot ->
             for (document in documentSnapshot.documents) {
-                val testEvent = document.toObject(Event::class.java)
-                if (testEvent != null)
-                    eventItems.add(testEvent!!)
-                print("yes $testEvent")
-
+                val newEvent = document.toObject(Event::class.java)
+                if (newEvent != null)
+                    eventItems.add(newEvent!!)
+                Log.d("test", document.id)
             }
             recyclerView.adapter?.notifyDataSetChanged()
         }
-
-
-        deleteIcon = ContextCompat.getDrawable(this,R.drawable.ic_delete_white_24dp)!!
 
         // Floating Action Button takes you to the Event Add activity
         val fab = findViewById<View>(R.id.floatingActionButton)
@@ -76,7 +85,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // using ItemTouchHelper allows the touching of objects moving and swipe them
+        deleteIcon = ContextCompat.getDrawable(this,R.drawable.ic_delete_white_24dp)!!
+
+        // using ItemTouchHelper allows the touching of objects moving/swipe them
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
@@ -98,7 +109,22 @@ class MainActivity : AppCompatActivity() {
                 snackbar.setActionTextColor(Color.parseColor("#FFB60B"))
                 snackbar.show()
 
-                reference.document().delete()
+                /*
+                val id : String = reference.document().collection("events")
+                    .document().id
+
+
+                db.collection("events").document(id)
+                    .delete()
+                    .addOnSuccessListener{
+                        Log.d("TAG","DocumentSnapshot successfully deleted!")
+                    }
+                    .addOnSuccessListener{
+                        Log.w("TAG","Error deleting document")
+                    }
+
+                        */
+
                 (viewAdapter as EventsRecyclerAdapter).removeEvent(viewHolder)
                 (recyclerView.adapter as EventsRecyclerAdapter).notifyItemRemoved(viewHolder.adapterPosition)
             }
@@ -183,10 +209,10 @@ class MainActivity : AppCompatActivity() {
 
         if (DataManager.eventList.size <= 0) {
             emptyListText.text = "List is empty, please add a new event!"
-            Log.d("test", "list is empty")
+            Log.d("list", "list is empty")
         } else {
             emptyListText.text = " "
-            Log.d("test", "list is not empty")
+            Log.d("list", "list is not empty")
 
         }
     }

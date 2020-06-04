@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class EventsRecyclerAdapter(context: Context, private val eventList: MutableList<Event>) : RecyclerView.Adapter<EventsRecyclerAdapter.ViewHolder>() {
 
     private val layoutInflater = LayoutInflater.from(context)
-
+    private val db = FirebaseFirestore.getInstance()
+    private val reference = db.collection("events")
     private var removedPosition: Int = 0
     private var removedItem = Event("","","")
 
@@ -41,6 +43,7 @@ class EventsRecyclerAdapter(context: Context, private val eventList: MutableList
 
         eventList.removeAt(viewHolder.adapterPosition)
         notifyItemRemoved(viewHolder.adapterPosition)
+
     }
 
     fun restoreItem() {

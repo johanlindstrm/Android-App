@@ -89,7 +89,7 @@
 
     <!-- Time between selected date and current date text -->
     <TextView
-        android:id="@+id/time_test_text"
+        android:id="@+id/time_left_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="157dp"

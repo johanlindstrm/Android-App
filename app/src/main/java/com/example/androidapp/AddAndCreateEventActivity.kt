@@ -4,20 +4,14 @@ import android.annotation.SuppressLint
 import android.app.ActionBar
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
-import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.Handler
 import android.util.Log
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isGone
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_add_and_create_date.*
-import kotlinx.android.synthetic.main.event_view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,8 +21,7 @@ class AddAndCreateEventActivity : AppCompatActivity() {
     private lateinit var eventTextName : EditText
     private lateinit var dateDiffText : TextView
     private lateinit var selectDateEdit : EditText
-    lateinit var auth : FirebaseAuth
-    private val handler = Handler()
+   // private val handler = Handler()
 
 
     @SuppressLint("WrongConstant")
@@ -39,17 +32,16 @@ class AddAndCreateEventActivity : AppCompatActivity() {
         supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar!!.setCustomView(R.layout.action_bar_add_event)
 
-        //auth = FirebaseAuth.getInstance()
 
         selectDateEdit = findViewById(R.id.select_date_edit)
         eventTextName = findViewById(R.id.event_name_edit)
-        dateDiffText = findViewById(R.id.time_test_text)
+        dateDiffText = findViewById(R.id.time_left_text)
 
         getDateDifference()
 
         add_button.setOnClickListener {
             // Run the addNewDate function on button click
-            addNewDate()
+            addNewEvent()
 
         }
 
@@ -57,7 +49,7 @@ class AddAndCreateEventActivity : AppCompatActivity() {
 
 
     // Adds a new Event Title, Selected Date, "Time Diff" to the Event List and then finish() returns to the recyclerview
-    private fun addNewDate() {
+    private fun addNewEvent() {
 
         val selectedEvent = eventTextName.text.toString()
         val selectedDate = selectDateEdit.text.toString()
@@ -93,9 +85,9 @@ class AddAndCreateEventActivity : AppCompatActivity() {
     final step have the diff count down the time!
      */
 
-    private fun getDateDifference() {
+     private fun getDateDifference() {
 
-        time_test_text.text = " "
+        time_left_text.text = " "
 
         val currentDate = Calendar.getInstance()
         val eventDate = Calendar.getInstance()
@@ -133,11 +125,11 @@ class AddAndCreateEventActivity : AppCompatActivity() {
                     difference %= minutesInMilli
                     val elapsedSeconds = difference / secondsInMilli
 
-                    time_test_text.text = "$elapsedDays Days $elapsedHours Hours $elapsedMinutes Minutes $elapsedSeconds Seconds"
+                    time_left_text.text = "$elapsedDays Days $elapsedHours Hours $elapsedMinutes Minutes $elapsedSeconds Seconds"
                 }
 
                 override fun onFinish() {
-                    time_test_text.text = "Done"
+                    time_left_text.text = "Done"
                 }
             }
 
