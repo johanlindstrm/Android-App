@@ -6,14 +6,18 @@ import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.util.Log
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_add_and_create_date.*
+import kotlinx.android.synthetic.main.event_view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,20 +47,11 @@ class AddAndCreateEventActivity : AppCompatActivity() {
 
         getDateDifference()
 
-        /*
-        handler.post(object : Runnable {
-            override fun run() {
-                handler.postDelayed(this, 1000)
-            }
-        })
-        */
-
         add_button.setOnClickListener {
             // Run the addNewDate function on button click
             addNewDate()
 
         }
-
 
     }
 
@@ -68,9 +63,20 @@ class AddAndCreateEventActivity : AppCompatActivity() {
         val selectedDate = selectDateEdit.text.toString()
         val timeLeft = dateDiffText.text.toString()
 
-        val newDate = Event(selectedDate, selectedEvent,timeLeft)
-
+        val newDate = Event(selectedDate, selectedEvent, timeLeft)
         DataManager.eventList.add(newDate)
+
+        val db = FirebaseFirestore.getInstance()
+        val events = Event(selectedDate,selectedEvent,timeLeft)
+
+        db.collection("events")
+            .add(events)
+            .addOnSuccessListener { documentReference ->
+                Log.d("log", "DocumentSnapshot written with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("log", "Error adding document", e)
+            }
 
         finish()
     }
@@ -84,12 +90,11 @@ class AddAndCreateEventActivity : AppCompatActivity() {
     next step convert to days, hours, min, sec
 
     //NOT DONE
-    final step update the countdown
+    final step have the diff count down the time!
      */
 
     private fun getDateDifference() {
 
-        //selectDateEdit.setText(SimpleDateFormat("yyyy.MM.dd").format(System.currentTimeMillis()))
         time_test_text.text = " "
 
         val currentDate = Calendar.getInstance()
@@ -101,13 +106,45 @@ class AddAndCreateEventActivity : AppCompatActivity() {
             eventDate.set(Calendar.MONTH, monthOfYear)
             eventDate.set(Calendar.YEAR, year)
 
-            val diff = eventDate.timeInMillis - currentDate.timeInMillis
+            var diff = eventDate.timeInMillis - currentDate.timeInMillis
+
+            /*
             val daysLeft = diff / (24 * 60 * 60 * 1000)
             val hoursLeft = diff / (1000 * 60 * 60) % 24
             val minutesLeft = diff / (1000 * 60) % 60
             val secondsLeft = (diff / 1000) % 60
+             */
+            //val milliseconds = eventDate.timeInMillis
 
-            time_test_text.text = "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds"
+            var countDownTimer = object : CountDownTimer(diff, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+
+                    var difference = millisUntilFinished
+                    val secondsInMilli : Long = 1000
+                    val minutesInMilli = secondsInMilli * 60
+                    val hoursInMilli = minutesInMilli * 60
+                    val daysInMilli = hoursInMilli * 24
+
+                    val elapsedDays = diff / daysInMilli
+                    difference %= daysInMilli
+                    val elapsedHours = difference / hoursInMilli
+                    difference %= hoursInMilli
+                    val elapsedMinutes = difference / minutesInMilli
+                    difference %= minutesInMilli
+                    val elapsedSeconds = difference / secondsInMilli
+
+                    time_test_text.text = "$elapsedDays Days $elapsedHours Hours $elapsedMinutes Minutes $elapsedSeconds Seconds"
+                }
+
+                override fun onFinish() {
+                    time_test_text.text = "Done"
+                }
+            }
+
+            countDownTimer.start()
+
+
+            //time_test_text.text = "$daysLeft Days $hoursLeft Hours $minutesLeft Minutes $secondsLeft Seconds"
 
             val myFormat = "yyyy.MM.dd" // mention the format you need
             val sdf = SimpleDateFormat(myFormat, Locale.ENGLISH)
@@ -115,10 +152,12 @@ class AddAndCreateEventActivity : AppCompatActivity() {
 
         }
 
+
+
         selectDateEdit.setOnClickListener {
            DatePickerDialog(this, dateSetListener, eventDate.get(Calendar.YEAR), eventDate.get(Calendar.MONTH), eventDate.get(Calendar.DAY_OF_MONTH)).show()
         }
-        Log.d("millis", "Calendar ${currentDate.timeInMillis} futureCal ${eventDate.timeInMillis}")
+        //Log.d("millis", "Calendar ${currentDate.timeInMillis} futureCal ${eventDate.timeInMillis}")
 
     }
 

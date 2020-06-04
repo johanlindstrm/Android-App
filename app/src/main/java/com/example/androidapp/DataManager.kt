@@ -3,7 +3,7 @@ package com.example.androidapp
 object DataManager {
     val eventList = mutableListOf<Event>()
 
-/*
+    /*
     init {
         createMockData()
     }

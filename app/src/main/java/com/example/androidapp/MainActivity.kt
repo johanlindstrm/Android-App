@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.androidapp.DataManager.eventList
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,60 +30,43 @@ class MainActivity : AppCompatActivity() {
     lateinit var deleteIcon: Drawable
     lateinit var mAuth: FirebaseAuth
 
+    private val db = FirebaseFirestore.getInstance()
+    private val reference = db.collection("events")
+
     private var swipeBackground:ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
 
     @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //Custom actionbar display
         supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar!!.setCustomView(R.layout.action_bar_layout)
 
         listIsEmptyText()
 
-        val db = FirebaseFirestore.getInstance()
-
-        val events = mutableListOf<Event>()
-
-        val eventsRef = db.collection("events")
-
-        eventsRef.addSnapshotListener { snapshot, e ->
-            if (snapshot != null) {
-                for (document in snapshot.documents) {
-                    val newEvent = document.toObject(Event::class.java)
-                    if (newEvent != null)
-                        events.add(newEvent!!)
-                    println("Johan : $newEvent")
-                }
-            }
-        }
-
-
-
-        // Create a new user with a first and last name
-/*
-        val user: MutableMap<String, Any> = HashMap()
-        user["first"] = "Ada"
-        user["last"] = "Lovelace"
-        user["born"] = 1815
-
-
-        // Add a new document with a generated ID
-        db.collection("users")
-            .add(user)
-            .addOnSuccessListener { documentReference -> Log.d("test", "DocumentSnapshot added with ID: " + documentReference.id) }
-            .addOnFailureListener { e -> Log.w("test", "Error adding document", e) }
-
- */
-
-
         mAuth = FirebaseAuth.getInstance()
         mAuth.currentUser
 
-        viewAdapter = EventsRecyclerAdapter(this, eventList)
+        viewAdapter = EventsRecyclerAdapter(this, DataManager.eventList)
         recyclerView = findViewById(R.id.datesListView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = EventsRecyclerAdapter(this, eventList)
+        recyclerView.adapter = EventsRecyclerAdapter(this, DataManager.eventList)
+
+        val eventItems = DataManager.eventList
+
+        reference.get().addOnSuccessListener { documentSnapshot ->
+            for (document in documentSnapshot.documents) {
+                val testEvent = document.toObject(Event::class.java)
+                if (testEvent != null)
+                    eventItems.add(testEvent!!)
+                print("yes $testEvent")
+
+            }
+            recyclerView.adapter?.notifyDataSetChanged()
+        }
+
+
         deleteIcon = ContextCompat.getDrawable(this,R.drawable.ic_delete_white_24dp)!!
 
         // Floating Action Button takes you to the Event Add activity
@@ -116,6 +98,7 @@ class MainActivity : AppCompatActivity() {
                 snackbar.setActionTextColor(Color.parseColor("#FFB60B"))
                 snackbar.show()
 
+                reference.document().delete()
                 (viewAdapter as EventsRecyclerAdapter).removeEvent(viewHolder)
                 (recyclerView.adapter as EventsRecyclerAdapter).notifyItemRemoved(viewHolder.adapterPosition)
             }
@@ -134,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     itemView.top + (itemView.height - deleteIcon.intrinsicHeight) / 2
                 val iconBottom: Int = iconTop + deleteIcon.intrinsicHeight
 
-                /* Saving in case I want to make an edit swipe or somethinh
+                /* Saving in case I want to make an edit swipe or something
                 if (dX > 0) { // Swiping to the right
                     val iconLeft: Int = itemView.left + iconMargin + deleteIcon.getIntrinsicWidth()
                     val iconRight = itemView.left + iconMargin
@@ -167,7 +150,9 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
     }
-    //auth anonomys
+
+
+    //auth anonymous
     override fun onStart() {
         super.onStart()
         val currentUser = mAuth.currentUser
@@ -196,7 +181,7 @@ class MainActivity : AppCompatActivity() {
     private fun listIsEmptyText() {
         emptyListText = findViewById(R.id.empty_list_text)
 
-        if (eventList.size <= 0) {
+        if (DataManager.eventList.size <= 0) {
             emptyListText.text = "List is empty, please add a new event!"
             Log.d("test", "list is empty")
         } else {
